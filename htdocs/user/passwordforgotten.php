@@ -71,13 +71,13 @@ if ($action == 'validatenewpassword' && $username && $passwordhash)
     $result = $edituser->fetch('', $_GET["username"]);
     if ($result < 0)
     {
-        $message = '<div class="error">'.$langs->trans("ErrorLoginDoesNotExists", $username).'</div>';
+        $message = '<div class="error">'.$langs->trans("ErrorLoginDoesNotExists", htmlspecialchars($username, ENT_QUOTES, 'UTF-8')).'</div>';
     }
     else
     {
         if (dol_verifyHash($edituser->pass_temp, $passwordhash))
         {
-            $newpassword = $edituser->setPassword($user, $edituser->pass_temp, 0);
+            $newpassword = $edituser->setPassword(htmlspecialchars($user, ENT_QUOTES, 'UTF-8'), $edituser->pass_temp, 0);
             dol_syslog("passwordforgotten.php new password for user->id=".$edituser->id." validated in database");
             header("Location: ".DOL_URL_ROOT.'/');
             exit;
@@ -103,15 +103,15 @@ if ($action == 'buildnewpassword' && $username)
     else
     {
         $edituser = new User($db);
-        $result = $edituser->fetch('', $username, '', 1);
-        if ($result == 0 && preg_match('/@/', $username))
+        $result = $edituser->fetch('', htmlspecialchars($username, ENT_QUOTES, 'UTF-8'), '', 1);
+        if ($result == 0 && preg_match('/@/', htmlspecialchars($username, ENT_QUOTES, 'UTF-8')))
         {
-        	$result = $edituser->fetch('', '', '', 1, -1, $username);
+        	$result = $edituser->fetch('', '', '', 1, -1, htmlspecialchars($username, ENT_QUOTES, 'UTF-8'));
         }
 
         if ($result <= 0 && $edituser->error == 'USERNOTFOUND')
         {
-            $message = '<div class="error">'.$langs->trans("ErrorLoginDoesNotExists", $username).'</div>';
+            $message = '<div class="error">'.$langs->trans("ErrorLoginDoesNotExists", htmlspecialchars($username, ENT_QUOTES, 'UTF-8')).'</div>';
             $username = '';
         }
         else
